@@ -1,40 +1,27 @@
 import os
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
-TOKEN = os.getenv("BOT_TOKEN")
+# Récupération du token sécurisé depuis Render
+JETON = os.getenv("BOT_TOKEN")
+bot = telebot.TeleBot(JETON)
 
-bot = telebot.TeleBot(TOKEN)
-
-# ————————————
+# -----------------------
 # MESSAGE D’ACCUEIL
-# ————————————
-
-WELCOME_MESSAGE = """
-👋 *Bienvenue dans la formation Shopify Afrique !*
-Je suis l’assistante *Coach Shopify Pro™*.
-
-✔ *Formation 100% gratuite*  
-✔ *Boutique clé en main*  
-✔ *Gagne jusqu’à 500.000 FCFA/jour*  
-
-👉 Clique sur *CONTINUER* ci-dessous pour rejoindre le canal officiel.
-"""
-
-CHANNEL_LINK = "https://t.me/CoachShopifyProAfrique"
+# -----------------------
+MESSAGE_BIENVENUE = (
+    "👋 Bonjour et bienvenue dans la *Formation Shopify Afrique !*\n\n"
+    "Je suis l’assistante *Coach Shopify Pro™*.\n"
+    "Pose-moi tes questions, je suis là pour t’aider à réussir 🔥🚀"
+)
 
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
-    markup = InlineKeyboardMarkup()
-    btn = InlineKeyboardButton("➡️ CONTINUER", url=CHANNEL_LINK)
-    markup.add(btn)
+def accueil(message):
+    bot.reply_to(message, MESSAGE_BIENVENUE)
 
-    bot.send_message(
-        message.chat.id,
-        WELCOME_MESSAGE,
-        parse_mode="Markdown",
-        reply_markup=markup
-    )
+@bot.message_handler(func=lambda msg: True)
+def reponse_auto(message):
+    bot.reply_to(message, "💬 Message bien reçu, l’assistante te répond !")
 
-print("Bot lancé...")
-bot.polling()
+# Lancement du bot
+bot.polling(none_stop=True)
